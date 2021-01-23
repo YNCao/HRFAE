@@ -26,6 +26,8 @@ torch.backends.cudnn.enabled = True
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
 Image.MAX_IMAGE_PIXELS = None
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 if torch.cuda.is_available():
     device = torch.device('cuda')
 else:
@@ -55,7 +57,7 @@ age_min = config['age_min']
 age_max = config['age_max']
 
 # The first 10 epochs are trained on 512 x 512 images with a batch size of 4.
-batch_size = 4
+batch_size = 4 
 img_size = (512, 512)
 
 # Load dataset
@@ -87,7 +89,7 @@ print('TV weight: ', config['w']['tv'])
 
 for n_epoch in range(epoch_0, epoch_0+epochs):
 
-    if n_epoch == 10:
+    if n_epoch == 30:
         trainer.config['w']['recon'] = 0.1*trainer.config['w']['recon']
         # Load dataset at 1024 x 1024 resolution for the next 10 epochs
         batch_size = config['batch_size']
@@ -99,7 +101,7 @@ for n_epoch in range(epoch_0, epoch_0+epochs):
 
     iter_B = iter(loader_B)
     for i, list_A in enumerate(loader_A):
-        
+        print("epoch:{},batch:{}\n".format(n_epoch,i))       
         image_A, age_A = list_A
         image_B, age_B = next(iter_B)
         if age_A.size(0)!=batch_size:break

@@ -22,6 +22,7 @@ from nets import *
 from functions import *
 from trainer import *
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
