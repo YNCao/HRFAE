@@ -1,6 +1,6 @@
 # Input data
-input_w: 1024                  
-input_h: 1024                  
+input_w: 512                  
+input_h: 512                  
 age_min: 20                  
 age_max: 70  
 # Training hyperparameters                 

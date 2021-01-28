@@ -27,7 +27,7 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = True
 Image.MAX_IMAGE_PIXELS = None
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 if torch.cuda.is_available():
     device = torch.device('cuda')
 else:
