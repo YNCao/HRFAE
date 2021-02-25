@@ -1,11 +1,11 @@
 # Input data
 input_w: 512              
 input_h: 512                 
-age_min: 20                  
-age_max: 220  
+age_min: 40                  
+age_max: 200  
 # Training hyperparameters                 
 batch_size: 4              
-epochs: 30    
+epochs: 20    
 # Optimizer parameters               
 lr: 0.0001         
 beta_1: 0.9                   
@@ -20,7 +20,7 @@ image_log_iter: 500
 log_iter: 5                  
 # Loss weight
 w:
-  recon: 10
+  recon: 50
   class: 0.1
   adver: 1
   dis: 1

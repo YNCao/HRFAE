@@ -21,7 +21,7 @@ from datasets import *
 from model import *
 from nets import *
 from functions import *
-from trainer_ import *
+from trainer import *
 
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.deterministic = True
@@ -36,9 +36,14 @@ else:
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--config', type=str, default='params', help='Path to the config file.')
-parser.add_argument('--dataset_path', type=str, default='./data/ffhq/', help='dataset path')
-parser.add_argument('--label_file_path', type=str, default='./data/ffhq.npy', help='label file path')
-parser.add_argument('--vgg_model_path', type=str, default='./models/dex_imdb_wiki.caffemodel.pt', help='pretrained age classifier')
+
+# parser.add_argument('--dataset_path', type=str, default='./data/ffhq', help='dataset path')
+# parser.add_argument('--label_file_path', type=str, default='./data/ffhq.npy', help='label file path')
+# parser.add_argument('--vgg_model_path', type=str, default='./models/dex_imdb_wiki.caffemodel.pt', help='pretrained age classifier')
+parser.add_argument('--dataset_path', type=str, default='./data/baa/baa_cub/crop_images', help='dataset path')
+parser.add_argument('--label_file_path', type=str, default='./data/fbaa.npy', help='label file path')
+parser.add_argument('--vgg_model_path', type=str, default='/home/cyn/git/res34/savedir/20210213_014146_fimg_16_prob/050test.ckpt', help='pretrained age classifier')
+
 parser.add_argument('--log_path', type=str, default='./logs/', help='log file path')
 parser.add_argument('--multigpu', type=bool, default=False, help='use multiple gpus')
 parser.add_argument('--resume', type=bool, default=False, help='resume from checkpoint')
@@ -58,8 +63,8 @@ age_min = config['age_min']
 age_max = config['age_max']
 
 # The first 10 epochs are trained on 512 x 512 images with a batch size of 4.
-batch_size = 2 
-img_size = (512, 512)
+batch_size = 16
+img_size = (256, 256)
 
 # Load dataset
 dataset_A = MyDataSet(age_min, age_max, opts.dataset_path, opts.label_file_path, output_size=img_size, training_set=True)
@@ -73,8 +78,8 @@ trainer = Trainer(config)
 trainer.initialize(opts.vgg_model_path)   
 trainer.to(device)
 
-epoch_0 = 0
-if opts.multigpu:
+epoch_0 = 30
+if opts.multigpu: 
     trainer.dataparallel()
 if opts.resume:
     epoch_0 = trainer.load_checkpoint(opts.checkpoint)
@@ -90,7 +95,7 @@ print('TV weight: ', config['w']['tv'])
 
 for n_epoch in range(epoch_0, epoch_0+epochs):
 
-    if n_epoch == 30:
+    if n_epoch == 10:
         trainer.config['w']['recon'] = 0.1*trainer.config['w']['recon']
         # Load dataset at 1024 x 1024 resolution for the next 10 epochs
         batch_size = config['batch_size']
@@ -116,8 +121,8 @@ for n_epoch in range(epoch_0, epoch_0+epochs):
         
         if (n_iter+1) % config['log_iter'] == 0:
             trainer.log_loss(logger, n_iter)
-        if (n_iter+1) % config['image_log_iter'] == 0:
-            trainer.log_image(image_A, age_A, logger, n_epoch, n_iter)
+#        if (n_iter+1) % config['image_log_iter'] == 0:
+#            trainer.log_image(image_A, age_A, logger, n_epoch, n_iter)
         if (n_iter+1) % config['image_save_iter'] == 0:
             trainer.save_image(image_A, age_A, log_dir, n_epoch, n_iter)
 
